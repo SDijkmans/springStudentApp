@@ -4,7 +4,11 @@
 <html>
 <head><title>Student hibernate Spring application</title></head>
 <body>
-${students}
-Check variable
+<div align="center">
+		<br>
+		<h1>${students}</h1>
+		${workplease}
+	</div>
+Check variable - is this the correct page?
 </body>
 </html>
