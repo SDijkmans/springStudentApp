@@ -54,27 +54,8 @@ public class SpringMVCApplicationContext extends WebMvcConfigurerAdapter
         argumentResolvers.add(new FormModelMethodArgumentResolver());
     }
 
-    @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
-    {
-        configurer.favorPathExtension(false).favorParameter(false).ignoreAcceptHeader(false);
-        configurer.defaultContentType(MediaType.APPLICATION_JSON);
-    }
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-    {
-        converters.add(this.gsonHttpMessageConverter());
-    }
 
-    private HttpMessageConverter gsonHttpMessageConverter()
-    {
-        GsonHttpMessageConverter messageConverter = new GsonHttpMessageConverter();
-        messageConverter.setGson(new Gson());
-        messageConverter.setSupportedMediaTypes(Lists.newArrayList(MediaType.APPLICATION_JSON));
-        return messageConverter;
-    }
-    
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/").setViewName("home");
@@ -82,12 +63,12 @@ public class SpringMVCApplicationContext extends WebMvcConfigurerAdapter
 	}
 
 
-//    @Bean
+	@Bean
     public InternalResourceViewResolver viewResolver()
     {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
-        resolver.setPrefix("/WEB-INF/views/");
+        resolver.setPrefix("/");
         resolver.setSuffix(".jsp");
         return resolver;
     }
