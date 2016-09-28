@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,6 +62,18 @@ public class StudentController
     	return getAllStudents();
     }
     
-
+    @RequestMapping(value = "/{someID}", method = RequestMethod.GET)
+    public ModelAndView getStudentWithID(@PathVariable(value="someID") Integer id) {
+    	Student student = studentService.getDAO().get(id);
+    	ModelAndView viewHome = getHomeViewWithStudentParameter();
+		viewHome.getModelMap().addAttribute("students", student);
+    	return viewHome;
+    }
+    
+    private ModelAndView getHomeViewWithStudentParameter() {
+		ModelAndView viewHome = new ModelAndView("home");
+		viewHome.getModelMap().addAttribute("student", new Student());
+		return viewHome;
+    }
 
 }
