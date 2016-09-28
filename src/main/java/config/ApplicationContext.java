@@ -119,6 +119,8 @@ public class ApplicationContext
     @Autowired
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory)
     {
+    	
+    	
         HibernateTransactionManager txManager = new HibernateTransactionManager(sessionFactory);
         return txManager;
     }

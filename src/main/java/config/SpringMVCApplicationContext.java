@@ -1,22 +1,19 @@
 package config;
 
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import java.util.List;
 import ml.rugal.sshcommon.springmvc.method.annotation.FormModelMethodArgumentResolver;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
@@ -38,53 +35,54 @@ import rugal.sample.springmvc.controller.ExceptionController;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = ExceptionController.class)
-public class SpringMVCApplicationContext extends WebMvcConfigurerAdapter
-{
+public class SpringMVCApplicationContext extends WebMvcConfigurerAdapter {
 
+	private static final Logger _log = LoggerFactory.getLogger(SpringMVCApplicationContext.class);
 
-    @Override
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer)
-    {
-        configurer.enable();
-    }
+	@Override
+	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+		ResourceHandlerRegistration resourceRegistration = registry.addResourceHandler("/resources/**");
+		resourceRegistration.addResourceLocations("/resources/");
+	}
+	
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers)
-    {
-        argumentResolvers.add(new FormModelMethodArgumentResolver());
-    }
-
-
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(new FormModelMethodArgumentResolver());
+	}
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
+		_log.debug("adding controllers");
 		registry.addViewController("/").setViewName("home");
 		registry.addViewController("/student").setViewName("student");
 	}
 
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setViewClass(JstlView.class);
+		resolver.setPrefix("/");
+		resolver.setSuffix(".jsp");
+		return resolver;
+	}
 
 	@Bean
-    public InternalResourceViewResolver viewResolver()
-    {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setViewClass(JstlView.class);
-        resolver.setPrefix("/");
-        resolver.setSuffix(".jsp");
-        return resolver;
-    }
+	public HandlerAdapter annotationMethodHandlerAdapter() {
+		return new RequestMappingHandlerAdapter();
+	}
 
-    @Bean
-    public HandlerAdapter annotationMethodHandlerAdapter()
-    {
-        return new RequestMappingHandlerAdapter();
-    }
+	@Bean
+	public AbstractHandlerMapping defaultAnnotationHandlerMapping() {
+		RequestMappingHandlerMapping mapping = new RequestMappingHandlerMapping();
+		mapping.setUseSuffixPatternMatch(false);
+		return mapping;
+	}
 
-    @Bean
-    public AbstractHandlerMapping defaultAnnotationHandlerMapping()
-    {
-        RequestMappingHandlerMapping mapping = new RequestMappingHandlerMapping();
-        mapping.setUseSuffixPatternMatch(false);
-        return mapping;
-    }
+
 
 }
