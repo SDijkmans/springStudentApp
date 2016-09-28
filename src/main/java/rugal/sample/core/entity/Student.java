@@ -8,9 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.beans.factory.annotation.Required;
-
-import com.sun.istack.internal.NotNull;
 
 import lombok.Data;
 
@@ -30,11 +27,9 @@ public class Student
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
 
-    @NotNull
     @Column(length = 20)
     private String name;
 
-    @NotNull
     @Column
     private Integer age;
     
